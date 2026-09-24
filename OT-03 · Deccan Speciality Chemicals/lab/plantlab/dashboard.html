@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Deccan OT-03 &mdash; plant mimic (mock)</title>
+<style>
+  :root{
+    --bg:#0e1116; --panel:#161b22; --panel2:#1c232c; --line:#2a323d;
+    --ink:#d7dee8; --dim:#8b97a6; --ok:#3fb950; --warn:#d29922;
+    --bad:#f85149; --acc:#58a6ff; --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font:14px/1.45 -apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+  header{display:flex;flex-wrap:wrap;gap:14px;align-items:center;
+         padding:12px 18px;background:var(--panel);border-bottom:1px solid var(--line);
+         position:sticky;top:0;z-index:5}
+  header h1{font-size:15px;margin:0;font-weight:600;letter-spacing:.2px}
+  header .tag{font-size:11px;color:var(--dim);border:1px solid var(--line);
+              border-radius:99px;padding:2px 8px}
+  .clock{font-family:var(--mono);font-size:13px;color:var(--acc);margin-left:auto}
+  main{display:grid;grid-template-columns:1.35fr 1fr;gap:14px;padding:14px 18px 40px}
+  @media(max-width:900px){main{grid-template-columns:1fr}}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;
+        padding:12px 14px}
+  .card h2{font-size:12px;text-transform:uppercase;letter-spacing:.9px;
+           color:var(--dim);margin:0 0 10px}
+  .layers{display:flex;flex-direction:column;gap:8px}
+  .layer{display:flex;align-items:flex-start;gap:10px;padding:8px 10px;
+         background:var(--panel2);border:1px solid var(--line);border-radius:8px}
+  .lamp{width:10px;height:10px;border-radius:50%;margin-top:5px;flex:none;
+        background:var(--ok);box-shadow:0 0 8px rgba(63,185,80,.55)}
+  .layer.down .lamp{background:var(--bad);box-shadow:0 0 8px rgba(248,81,73,.6)}
+  .layer.down{border-color:#5b2b2b;background:#1d1517}
+  .layer .who{font-weight:600;font-size:13px}
+  .layer .d{color:var(--dim);font-size:12px}
+  .readouts{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+  .ro{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+  .ro b{display:block;font-family:var(--mono);font-size:17px;font-weight:600}
+  .ro span{font-size:10.5px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px}
+  svg.trend{width:100%;height:104px;background:#0b0e12;border:1px solid var(--line);
+            border-radius:8px;display:block}
+  table{width:100%;border-collapse:collapse;font-size:12.5px}
+  th,td{text-align:left;padding:4px 6px;border-bottom:1px solid var(--line)}
+  th{color:var(--dim);font-weight:500;font-size:11px;text-transform:uppercase}
+  td.mono{font-family:var(--mono);font-size:12px}
+  .pill{font-size:10.5px;padding:1px 7px;border-radius:99px;border:1px solid var(--line);
+        color:var(--dim)}
+  .pill.bad{color:#ffb3ae;border-color:#5b2b2b;background:#1d1517}
+  .pill.ok{color:#b7f0bd;border-color:#1f4d28;background:#0f1c12}
+  .btns{display:flex;flex-wrap:wrap;gap:8px}
+  button{background:var(--panel2);color:var(--ink);border:1px solid var(--line);
+         border-radius:7px;padding:7px 11px;font-size:12.5px;cursor:pointer}
+  button:hover{border-color:#3d4a5a;background:#212a35}
+  button.primary{background:#1f6feb22;border-color:#1f6feb;color:#9ecbff}
+  button.danger{border-color:#5b2b2b;color:#ffb3ae}
+  select{background:var(--panel2);color:var(--ink);border:1px solid var(--line);
+         border-radius:7px;padding:6px 8px;font-size:12.5px}
+  .log{font-family:var(--mono);font-size:11.5px;max-height:230px;overflow:auto;
+       background:#0b0e12;border:1px solid var(--line);border-radius:8px;padding:8px}
+  .log div{padding:1px 0;color:#9fb0c3;white-space:pre-wrap}
+  .log div.hot{color:#ffb3ae}
+  .note{color:var(--dim);font-size:11.5px;margin-top:8px}
+  .kv{display:grid;grid-template-columns:auto 1fr;gap:2px 12px;font-size:12.5px}
+  .kv div:nth-child(odd){color:var(--dim)}
+  .kv div:nth-child(even){font-family:var(--mono);font-size:12px}
+</style>
+</head>
+<body>
+<header>
+  <h1>Deccan Speciality Chemicals &mdash; reactor R-201 mimic</h1>
+  <span class="tag">MOCK / LAB ONLY</span>
+  <span class="tag" id="mode">auto attack ON</span>
+  <span class="clock" id="clock">&mdash;</span>
+</header>
+
+<main>
+  <section class="card">
+    <h2>Reactor and protection layers</h2>
+    <div class="readouts">
+      <div class="ro"><b id="p">7.80</b><span>pressure bar(g)</span></div>
+      <div class="ro"><b id="t">138</b><span>temperature &deg;C</span></div>
+      <div class="ro"><b id="c">62</b><span>coolant output %</span></div>
+      <div class="ro"><b id="f">45</b><span>feed valve %</span></div>
+    </div>
+    <div class="layers" id="layers"></div>
+    <div style="margin-top:12px">
+      <svg class="trend" id="trend" viewBox="0 0 600 104" preserveAspectRatio="none"></svg>
+      <div class="note">Reactor pressure. Dashed line: 9.5 bar alarm set point.
+         The alarm is configured and suppressed at the same time.</div>
+    </div>
+  </section>
+
+  <section style="display:flex;flex-direction:column;gap:14px">
+    <div class="card">
+      <h2>Drive it</h2>
+      <div class="btns">
+        <button class="primary" onclick="act('play')">&#9654; play the night</button>
+        <button onclick="act('pause')">&#10074;&#10074; pause</button>
+        <button onclick="act('reset')">reset</button>
+        <select onchange="act('speed',{value:this.value})">
+          <option value="slow">slow</option>
+          <option value="normal" selected>normal</option>
+          <option value="fast">fast</option>
+        </select>
+        <button onclick="act('auto_attack',{value:!state.auto_attack})" id="autob">
+          auto attack: on</button>
+      </div>
+      <div class="btns" style="margin-top:9px">
+        <button class="danger" onclick="act('attack_override')">1 &middot; override the pressure input</button>
+        <button class="danger" onclick="act('attack_alarm')">2 &middot; suppress the alarm</button>
+        <button class="danger" onclick="act('attack_coolant')">3 &middot; break the cooling</button>
+        <button onclick="act('restore_cooling')">restore cooling</button>
+      </div>
+      <div class="note">The three buttons are the whole attack. Three writes,
+        from one workstation, with a valid account. Nothing is exploited and
+        nothing is installed.</div>
+    </div>
+
+    <div class="card">
+      <h2>Safety controller &mdash; SafeGuard SIS</h2>
+      <div class="kv" id="sis"></div>
+    </div>
+
+    <div class="card">
+      <h2>Control system and the corporate side</h2>
+      <div class="kv" id="dcs"></div>
+      <table style="margin-top:8px">
+        <thead><tr><th>recent sign-in</th><th>account</th><th>host</th><th>MFA</th></tr></thead>
+        <tbody id="signins"></tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h2>Event log</h2>
+      <div class="log" id="log"></div>
+    </div>
+  </section>
+</main>
+
+<script>
+let state = {};
+
+async function act(action, extra){
+  await fetch('/api/action', {method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify(Object.assign({action}, extra||{}))});
+  await poll();
+}
+
+function polyline(hist, sp){
+  const pts = hist.slice(-240);
+  if(pts.length < 2) return '';
+  const xs = i => 6 + i * (588 / Math.max(1, pts.length - 1));
+  const ymax = Math.max(13, ...pts.map(p => p[1])) + 0.4;
+  const ymin = 7.2;
+  const ys = v => 98 - (v - ymin) / (ymax - ymin) * 88;
+  const path = pts.map((p,i) => (i?'L':'M') + xs(i).toFixed(1) + ' ' + ys(p[1]).toFixed(1)).join(' ');
+  const alarmY = ys(9.5);
+  const tripY = ys(10.5);
+  const reliefY = ys(12.0);
+  return `
+    <path d="${path}" fill="none" stroke="#58a6ff" stroke-width="2" stroke-linejoin="round"/>
+    <line x1="6" x2="594" y1="${alarmY}" y2="${alarmY}" stroke="#d29922"
+          stroke-width="1" stroke-dasharray="5 4" opacity=".9"/>
+    <line x1="6" x2="594" y1="${tripY}" y2="${tripY}" stroke="#f85149"
+          stroke-width="1" stroke-dasharray="5 4" opacity=".7"/>
+    <line x1="6" x2="594" y1="${reliefY}" y2="${reliefY}" stroke="#8b97a6"
+          stroke-width="1" stroke-dasharray="2 4" opacity=".7"/>
+    <text x="9" y="${alarmY-3}" fill="#d29922" font-size="9">9.5 alarm</text>
+    <text x="9" y="${tripY-3}" fill="#f85149" font-size="9">10.5 trip</text>
+    <text x="9" y="${reliefY-3}" fill="#8b97a6" font-size="9">12.0 relief</text>`;
+}
+
+function render(){
+  const s = state;
+  document.getElementById('clock').textContent = s.clock + '  (simulated)';
+  document.getElementById('p').textContent = s.pressure.toFixed(2);
+  document.getElementById('t').textContent = s.temperature.toFixed(0);
+  document.getElementById('c').textContent = s.dcs.coolant.out.toFixed(0);
+  document.getElementById('f').textContent = s.dcs.feed_valve_position.toFixed(0);
+  document.getElementById('mode').textContent = 'auto attack ' + (s.auto_attack?'ON':'OFF');
+  document.getElementById('autob').textContent = 'auto attack: ' + (s.auto_attack?'on':'off');
+
+  const lay = document.getElementById('layers');
+  lay.innerHTML = Object.entries(s.layers).map(([k,v]) => `
+    <div class="layer ${v.ok?'':'down'}">
+      <div class="lamp"></div>
+      <div><div class="who">${k.replace('_',' ')} &mdash; ${v.name}</div>
+           <div class="d">${v.detail}</div></div>
+    </div>`).join('');
+
+  document.getElementById('trend').innerHTML = polyline(s.history, s.set_points.trip);
+
+  const ov = s.sis.overrides.length
+      ? s.sis.overrides.map(o => `${o.tag} since ${o.set_at} (expires: ${o.expires})`).join('; ')
+      : 'none';
+  document.getElementById('sis').innerHTML = `
+    <div>key switch</div><div>${s.sis.key_switch}</div>
+    <div>live overrides</div><div>${ov}</div>
+    <div>logic version</div><div>${s.sis.logic_version}</div>
+    <div>logic downloads in log</div><div>${s.sis.downloads_in_ring}</div>
+    <div>event log held</div><div>${s.sis.ring_events} of ${s.sis.ring_capacity}
+        (oldest ${s.sis.ring_oldest})</div>`;
+
+  const sup = s.dcs.suppressed.length ? s.dcs.suppressed.join(', ') : 'none';
+  document.getElementById('dcs').innerHTML = `
+    <div>coolant controller</div><div>${s.dcs.coolant.tag}: sp ${s.dcs.coolant.sp}
+        out ${s.dcs.coolant.out} gain ${s.dcs.coolant.gain} mode ${s.dcs.coolant.mode}</div>
+    <div>suppressed alarms</div><div>${sup}</div>
+    <div>shown by default?</div><div>no &mdash; the operator has to open the list</div>
+    <div>journal rows held</div><div>${s.dcs.journal_rows}</div>
+    <div>MFA on this workstation</div><div>${s.corporate.mfa_on_interactive ? 'yes' : 'NO'}</div>
+    <div>EDR alerts in a year</div><div>${s.corporate.edr_alerts_in_a_year}</div>`;
+
+  document.getElementById('signins').innerHTML = s.corporate.recent_signins.slice().reverse()
+    .map(x => `<tr><td class="mono">${x.ts}</td><td class="mono">${x.account}</td>
+               <td class="mono">${x.host}</td>
+               <td><span class="pill ${x.mfa?'ok':'bad'}">${x.mfa?'yes':'no'}</span></td></tr>`)
+    .join('');
+
+  const log = document.getElementById('log');
+  log.innerHTML = s.log.slice().reverse().map(l =>
+    `<div class="${/OVERRIDE|SUPPRESSED|BROKEN|LIFTS/.test(l)?'hot':''}">${l}</div>`).join('');
+}
+
+async function poll(){
+  try{
+    state = await (await fetch('/api/state')).json();
+    render();
+  }catch(e){ document.getElementById('clock').textContent = 'dashboard disconnected'; }
+}
+poll();
+setInterval(poll, 600);
+</script>
+</body>
+</html>

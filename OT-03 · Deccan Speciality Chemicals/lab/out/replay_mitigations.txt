@@ -1,0 +1,5 @@
+M1_rate_limit_config_password: config-mode lock-out after repeated failures would have fired; 4 bad attempts recorded, no lock-out exists today
+M2_override_auto_expiry: override auto-expires; at the moment of demand the SIS trip fires: tripped=True, feed valve=CLOSED
+M3_suppression_requires_permit: suppression refused: no maintenance permit covers R-201-HP-ALM; operator sees a banner and an audible alert at 9.5 bar
+M4_change_window_enforced: write to FIC-101 refused outside the approved change window (02:14 falls outside it); change journal shows the refusal
+M5_sis_airgap: safety engineering reachable only from the dedicated non-domain workstation in the rack-room cabinet: the corporate account used on the night has no engineering path to the logic solver

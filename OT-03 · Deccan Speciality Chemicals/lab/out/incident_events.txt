@@ -1,0 +1,17 @@
+[seed] safety controller ring seeded from 2027-01-05 00:00:00; ring now holds 5000 events, oldest 2027-01-06 13:55:00
+[2027-04-02 23:52:00] configuration mode on the SIS: {'ok': True, 'config_mode': True}
+[2027-04-02 23:52:00] override SET on PIT-104 while the key switch is in RUN - accepted, no expiry, no time limit
+[2027-04-02 23:58:00] high pressure alarm R-201-HP-ALM suppressed from ENG-DCS-01
+[2027-04-03 02:09:00] interactive sign-in to ENG-DCS-01 as a.rathod (holder is off site - F4)
+[2027-04-03 02:14:00] coolant controller FIC-101 reconfigured from ENG-DCS-01: {'gain': '1.0 -> 0.0', 'bias': '0.0 -> 0.0'} - output now tracks 0 regardless of set point
+[2027-04-03 04:35:00] the operator notices the rising trend on a display at 8.69 bar - nothing alarmed, he was looking at the trend himself
+[2027-04-03 04:36:00] the operator starts reducing feed by hand - the change has not reached the valve when the relief valve lifts
+[2027-04-03 04:37:04] layer 2 demand: pressure 9.50 bar crossed the 9.5 alarm set point. Presented to the operator: False (suppressed=True)
+[2027-04-03 04:40:52] layer 4: the PRV lifts at 12.00 bar and discharges to the scrubber
+[2027-04-03 04:42:30] the PRV reseats after 98 seconds (the case study records 96 s of discharge, F29)
+[2027-04-03 04:42:42] the operator opens the emergency coolant valve XV-118 by hand. The valve the SIS would have opened on its own at 10.5 bar is opened by a person, seconds after the relief valve had already done the job.
+[2027-04-03 04:43:00] the shift engineer restores the coolant loop configuration
+[2027-04-03 04:43:30] feed is stopped by hand; the reactor starts to cool
+[2027-04-03 05:05:00] note: the SIS event log holds no logic download at all - the safety logic is identical to the version proof tested on 14 Feb 2027 (F14)
+[2027-04-03 05:05:00] overrides still live on the controller at the end of the night: ['PIT-104'] - nothing expires them (F10)
+[2027-04-03 05:05:00] suppressed alarms still shown as suppressed: ['R-201-HP-ALM']

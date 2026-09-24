@@ -1,0 +1,7 @@
+2027-04-02 23:58:00  alarm_suppression      R-201-HP-ALM high pressure alarm suppressed  by=a.rathod@deccan.local ws=ENG-DCS-01
+2027-04-03 02:14:00  configuration_change   FIC-101      gain: 1.0 -> 0.0, bias: 0.0 -> 0.0  by=a.rathod@deccan.local ws=ENG-DCS-01
+2027-04-03 04:36:00  operator_action        FIC-102      FIC-102 set point reduced to 20% by hand, rising reactor pressure  by=night panel operator ws=OPS-PANEL-1
+2027-04-03 04:37:04  alarm_event            R-201-HP-ALM high pressure alarm raised at 9.50 bar (suppressed - NOT shown to operator)  by=system ws=CONTROLLER
+2027-04-03 04:42:42  operator_action        XV-118       XV-118 opened by hand - the valve the SIS would have opened at 10.5 bar  by=night panel operator ws=OPS-PANEL-1
+2027-04-03 04:43:00  configuration_change   FIC-101      gain: 0.0 -> 1.0  by=shift.engineer@deccan.local ws=ENG-DCS-01
+2027-04-03 04:47:40  alarm_event            R-201-HP-ALM high pressure alarm returned to normal (suppression still in place)  by=system ws=CONTROLLER

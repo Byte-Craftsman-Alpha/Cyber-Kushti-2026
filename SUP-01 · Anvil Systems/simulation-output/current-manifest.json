@@ -1,0 +1,30 @@
+{
+  "version": "4.13.0",
+  "published": "2026-09-24T21:18:56+0530",
+  "files": [
+    {
+      "name": "anvil-agent-4.13.0-freebsd-amd64.bin",
+      "sha256": "e63d4ab8038cce3147edaefa70de650209e006eb39c29be2055b8345ac5a67c9"
+    },
+    {
+      "name": "anvil-agent-4.13.0-linux-amd64.bin",
+      "sha256": "b7ae919dbc44df800a73ffe3bad9406118ccd036713bfa06d70ac3e78b13440d"
+    },
+    {
+      "name": "anvil-agent-4.13.0-linux-arm64.bin",
+      "sha256": "9a0b78f75508b15b4456ebbb71c1e016066f244c31042cabf7987e050df842cb"
+    },
+    {
+      "name": "anvil-agent-4.13.0-macos-amd64.bin",
+      "sha256": "5fc2c754a6aa62def263b5bf21a098e9a4774d18dd8ca163f151944ae10bd464"
+    },
+    {
+      "name": "anvil-agent-4.13.0-macos-arm64.bin",
+      "sha256": "665f2ff2cb16951c664dbccb345bec1d40e7ff2dca5cc47d4a96d87a42dc37c1"
+    },
+    {
+      "name": "anvil-agent-4.13.0-win-amd64.bin",
+      "sha256": "382dc39481a825236cf08b5805ec39bbfe58a4d55d328411becd923a96fd42d6"
+    }
+  ]
+}

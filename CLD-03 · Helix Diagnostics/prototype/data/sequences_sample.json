@@ -1,0 +1,142 @@
+[
+  {
+    "sample_id": "HELIX-SMP-000001",
+    "patient_ref": "PT-100001",
+    "hospital": "hospital-group-02",
+    "sequence_hash": "7b84703768914fa9",
+    "size_kb": 4201
+  },
+  {
+    "sample_id": "HELIX-SMP-000002",
+    "patient_ref": "PT-100002",
+    "hospital": "hospital-group-03",
+    "sequence_hash": "9936052c569c3cc0",
+    "size_kb": 4202
+  },
+  {
+    "sample_id": "HELIX-SMP-000003",
+    "patient_ref": "PT-100003",
+    "hospital": "hospital-group-04",
+    "sequence_hash": "ff83cf95447ec416",
+    "size_kb": 4203
+  },
+  {
+    "sample_id": "HELIX-SMP-000004",
+    "patient_ref": "PT-100004",
+    "hospital": "hospital-group-05",
+    "sequence_hash": "54f13baf2e6af5e0",
+    "size_kb": 4204
+  },
+  {
+    "sample_id": "HELIX-SMP-000005",
+    "patient_ref": "PT-100005",
+    "hospital": "hospital-group-06",
+    "sequence_hash": "fa7cc64f52883339",
+    "size_kb": 4205
+  },
+  {
+    "sample_id": "HELIX-SMP-000006",
+    "patient_ref": "PT-100006",
+    "hospital": "hospital-group-07",
+    "sequence_hash": "0aa286454ba778b0",
+    "size_kb": 4206
+  },
+  {
+    "sample_id": "HELIX-SMP-000007",
+    "patient_ref": "PT-100007",
+    "hospital": "hospital-group-08",
+    "sequence_hash": "1561e177cf9d395a",
+    "size_kb": 4207
+  },
+  {
+    "sample_id": "HELIX-SMP-000008",
+    "patient_ref": "PT-100008",
+    "hospital": "hospital-group-09",
+    "sequence_hash": "03efbba6ff410514",
+    "size_kb": 4208
+  },
+  {
+    "sample_id": "HELIX-SMP-000009",
+    "patient_ref": "PT-100009",
+    "hospital": "hospital-group-10",
+    "sequence_hash": "e5bd7a26c5940a1f",
+    "size_kb": 4209
+  },
+  {
+    "sample_id": "HELIX-SMP-000010",
+    "patient_ref": "PT-100010",
+    "hospital": "hospital-group-11",
+    "sequence_hash": "f0fd6f75251e30bf",
+    "size_kb": 4210
+  },
+  {
+    "sample_id": "HELIX-SMP-000011",
+    "patient_ref": "PT-100011",
+    "hospital": "hospital-group-12",
+    "sequence_hash": "abff415be5888d07",
+    "size_kb": 4211
+  },
+  {
+    "sample_id": "HELIX-SMP-000012",
+    "patient_ref": "PT-100012",
+    "hospital": "hospital-group-13",
+    "sequence_hash": "11c7d27c7eeede9a",
+    "size_kb": 4212
+  },
+  {
+    "sample_id": "HELIX-SMP-000013",
+    "patient_ref": "PT-100013",
+    "hospital": "hospital-group-14",
+    "sequence_hash": "f793e3a5d04f1563",
+    "size_kb": 4213
+  },
+  {
+    "sample_id": "HELIX-SMP-000014",
+    "patient_ref": "PT-100014",
+    "hospital": "hospital-group-15",
+    "sequence_hash": "cf71070fc9d084a7",
+    "size_kb": 4214
+  },
+  {
+    "sample_id": "HELIX-SMP-000015",
+    "patient_ref": "PT-100015",
+    "hospital": "hospital-group-16",
+    "sequence_hash": "70f2931227240154",
+    "size_kb": 4215
+  },
+  {
+    "sample_id": "HELIX-SMP-000016",
+    "patient_ref": "PT-100016",
+    "hospital": "hospital-group-17",
+    "sequence_hash": "4e5e7b33929e362f",
+    "size_kb": 4216
+  },
+  {
+    "sample_id": "HELIX-SMP-000017",
+    "patient_ref": "PT-100017",
+    "hospital": "hospital-group-18",
+    "sequence_hash": "fbe03f75d225cfca",
+    "size_kb": 4217
+  },
+  {
+    "sample_id": "HELIX-SMP-000018",
+    "patient_ref": "PT-100018",
+    "hospital": "hospital-group-19",
+    "sequence_hash": "38ae10bb35d155c9",
+    "size_kb": 4218
+  },
+  {
+    "sample_id": "HELIX-SMP-000019",
+    "patient_ref": "PT-100019",
+    "hospital": "hospital-group-20",
+    "sequence_hash": "daccd44ddcc514f1",
+    "size_kb": 4219
+  },
+  {
+    "sample_id": "HELIX-SMP-000020",
+    "patient_ref": "PT-100020",
+    "hospital": "hospital-group-21",
+    "sequence_hash": "9c3edf1b0d54699a",
+    "size_kb": 4220
+  }
+]

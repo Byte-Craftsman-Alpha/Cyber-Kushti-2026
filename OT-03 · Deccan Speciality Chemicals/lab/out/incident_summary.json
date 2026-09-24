@@ -1,0 +1,16 @@
+{
+  "historian_rows": 10260,
+  "sis_ring_capacity": 5000,
+  "sis_ring_events_held": 5000,
+  "sis_ring_oldest": "2027-01-06 18:30:00",
+  "sis_ring_overwritten": 102,
+  "dcs_journal_rows": 7,
+  "ad_auth_rows": 27,
+  "edr_events": 12,
+  "edr_alerts": 0,
+  "overrides_live": [
+    "PIT-104"
+  ],
+  "prv_lifts": 1,
+  "logic_version": "R201-SIS-L4.2 (proof tested 14 Feb 2027)"
+}

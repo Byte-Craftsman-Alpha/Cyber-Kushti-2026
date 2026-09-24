@@ -1,0 +1,14 @@
+{
+  "commits": [
+    {"id": "a1c05e2", "author": "engineer-3", "title": "release: 4.11.0", "files": 1, "lines": 4},
+    {"id": "b93f77d", "author": "engineer-7", "title": "fix: trace span export retry", "files": 2, "lines": 28},
+    {"id": "d4e8b03", "author": "engineer-2", "title": "fix: handle empty config section on startup", "files": 2, "lines": 31, "note": "PR #2841 opened 2027-03-02 10:58 IST; approved by reviewer-1 at 11:04 and reviewer-2 at 11:07 (nine minutes total)"},
+    {"id": "c7f3a91", "author": "engineer-2", "title": "fix: handle empty config section on startup", "files": 2, "lines": 31, "note": "amended commit of d4e8b03 after review comments; pushed by engineer-2's account 2027-03-02 11:31 IST; the tag v4.11.2 was moved to this commit at 11:45 IST"},
+    {"id": "e2a7c15", "author": "engineer-5", "title": "feat: cardinality guard on label sets", "files": 3, "lines": 64},
+    {"id": "f81d4a6", "author": "engineer-9", "title": "release: 4.13.0", "files": 2, "lines": 12}
+  ],
+  "source_review_verdict": {
+    "commit": "c7f3a91",
+    "finding": "no functional difference from the stated purpose; no network calls, no exec/eval, no obfuscation, no dependency changes; nothing malicious found in any commit in the repository (F19)"
+  }
+}

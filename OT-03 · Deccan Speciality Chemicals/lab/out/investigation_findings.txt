@@ -1,0 +1,180 @@
+INVESTIGATION RESULTS - DECCAN OT-03 (MOCK LAB)
+Automatically generated from the artefacts produced by run 2.
+
+--- step_1_layer_3 ---
+{
+  "live_overrides_at_read_time": [
+    "PIT-104"
+  ],
+  "override_still_set_after_event": true,
+  "override_set_at": "2027-04-02 23:52:00",
+  "override_expiry_configured": null,
+  "override_set_events_in_ring": 14,
+  "override_clear_events_in_ring": 11,
+  "set_events_by_tag": {
+    "PIT-104": 4,
+    "PIT-105": 1,
+    "TIT-201": 1,
+    "TIT-202": 1,
+    "LIT-301": 1,
+    "LIT-302": 1,
+    "FIT-401": 1,
+    "FIT-402": 1,
+    "PIT-106": 1,
+    "TIT-203": 1,
+    "PIT-107": 1
+  },
+  "downloads_in_ring": 0,
+  "downloads_refused_in_ring": 0,
+  "logic_version_on_controller": "R201-SIS-L4.2 (proof tested 14 Feb 2027)",
+  "logic_version_in_proof_test_record": "R201-SIS-L4.2 (proof tested 14 Feb 2027)",
+  "logic_unchanged": true
+}
+
+--- step_2_layer_2 ---
+{
+  "suppression_events_in_journal": 1,
+  "suppression_detail": [
+    {
+      "ts": "2027-04-02 23:58:00",
+      "object": "R-201-HP-ALM",
+      "account": "a.rathod@deccan.local",
+      "workstation": "ENG-DCS-01"
+    }
+  ],
+  "suppression_list_history_available": false,
+  "suppression_list_current_state": [
+    "R-201-HP-ALM"
+  ],
+  "suppression_list_displayed_by_default": false,
+  "alarm_presented_to_operator": false,
+  "alarm_event_recorded": [
+    {
+      "ts": "2027-04-03 04:37:04",
+      "detail": "high pressure alarm raised at 9.50 bar (suppressed - NOT shown to operator)"
+    },
+    {
+      "ts": "2027-04-03 04:47:40",
+      "detail": "high pressure alarm returned to normal (suppression still in place)"
+    }
+  ]
+}
+
+--- step_3_layer_1 ---
+{
+  "configuration_changes_on_FIC_101": [
+    {
+      "ts": "2027-04-03 02:14:00",
+      "detail": "gain: 1.0 -> 0.0, bias: 0.0 -> 0.0",
+      "account": "a.rathod@deccan.local",
+      "workstation": "ENG-DCS-01"
+    },
+    {
+      "ts": "2027-04-03 04:43:00",
+      "detail": "gain: 0.0 -> 1.0",
+      "account": "shift.engineer@deccan.local",
+      "workstation": "ENG-DCS-01"
+    }
+  ],
+  "operator_actions_on_FIC_101": 0,
+  "coolant_output_at_first_config_write": null,
+  "coolant_output_range_in_rise_window": {
+    "label": "FIC-101_output_pct",
+    "min": 0.0,
+    "max": 0.0
+  },
+  "coolant_setpoint_range_in_rise_window": {
+    "label": "FIC-101_setpoint_pct",
+    "min": 62.0,
+    "max": 62.0
+  },
+  "feed_valve_range_in_rise_window": {
+    "label": "FV-102_valve_position_pct",
+    "min": 45.0,
+    "max": 45.0
+  },
+  "pressure_start_of_window": 8.114,
+  "pressure_end_of_window": 11.923,
+  "prv_lifted": true,
+  "prv_lifts": 1,
+  "prv_longest_discharge_seconds": 98.0
+}
+
+--- step_4_access ---
+{
+  "ad_window": [
+    "2027-01-12 10:20:00",
+    "2027-04-03 02:09:00"
+  ],
+  "ad_retention_days": 180,
+  "interactive_signins_to_ENG-DCS-01": 27,
+  "signins_out_of_hours": 21,
+  "accounts_involved": [
+    "a.rathod",
+    "k.desai",
+    "m.patel",
+    "s.iyer"
+  ],
+  "accounts_out_of_hours": [
+    "a.rathod",
+    "k.desai",
+    "m.patel",
+    "s.iyer"
+  ],
+  "callout_records_available": 2,
+  "signins_out_of_hours_without_callout": 19,
+  "incident_night_signin": [
+    {
+      "ts": "2027-04-03 02:09:00",
+      "account": "a.rathod",
+      "mfa": false
+    }
+  ],
+  "mfa_on_interactive_signin": false,
+  "edr_event_rows_held": 12,
+  "edr_event_retention_days": 30,
+  "edr_alerts_ever": 0,
+  "edr_alert_history_days": 365,
+  "firewall_plant_log_rows": 162,
+  "firewall_plant_log_window": [
+    "2027-01-12 17:00:00",
+    "2027-04-02 17:00:00"
+  ],
+  "firewall_verdict": "every permitted connection is from ENG-DCS-01; which is expected behaviour for that host",
+  "service_desk_tickets": [
+    {
+      "ts": "2026-12-11 10:40:00",
+      "ticket": "SD-2026-118842",
+      "verification": "Employee number quoted by the caller, cross-checked against the site badge register",
+      "verifier_note": "Employee number is printed on the site identity badge and is legible to anyone who has seen the badge"
+    }
+  ],
+  "attribution": "UNRESOLVED - the logs show an account, never a person"
+}
+
+--- step_5_evidence_gaps ---
+{
+  "sis_ring_capacity": 5000,
+  "sis_ring_events_held": 5000,
+  "sis_ring_oldest_retained": "2027-01-09 22:45:00",
+  "sis_ring_newest": "2027-04-06 09:20:00",
+  "sis_ring_events_overwritten": 285,
+  "sis_ring_span_days": 86.4,
+  "incident_date": "2027-04-03 04:41:00",
+  "question_the_ring_cannot_answer": "whether override activity predates 2027-01-09 22:45:00",
+  "plant_network_flow_records": 0,
+  "plant_network_question": "whether the safety protocol was ever spoken to by any host other than ENG-DCS-01",
+  "internet_edge_refused_total": 220000,
+  "internet_edge_sources": 9400,
+  "internet_edge_purpose": "none - background scanning, no relation to anything on the plant segment (F28)"
+}
+
+--- step_6_control_run ---
+{
+  "trip_set_point": 10.5,
+  "first_pressure_at_which_the_sis_tripped": 10.55,
+  "feed_valve_after_trip": "CLOSED",
+  "emergency_coolant_after_trip": "OPEN",
+  "conclusion": "the trip logic is sound; on the night it was prevented from seeing the pressure by an override, not by a fault"
+}
+

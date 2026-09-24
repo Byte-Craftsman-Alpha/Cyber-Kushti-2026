@@ -1,0 +1,11 @@
+pressure=8.15 trip=False final_elements={'FV-102': 'OPEN', 'XV-118': 'CLOSED'}
+pressure=8.50 trip=False final_elements={'FV-102': 'OPEN', 'XV-118': 'CLOSED'}
+pressure=8.85 trip=False final_elements={'FV-102': 'OPEN', 'XV-118': 'CLOSED'}
+pressure=9.20 trip=False final_elements={'FV-102': 'OPEN', 'XV-118': 'CLOSED'}
+pressure=9.55 trip=False final_elements={'FV-102': 'OPEN', 'XV-118': 'CLOSED'}
+pressure=9.90 trip=False final_elements={'FV-102': 'OPEN', 'XV-118': 'CLOSED'}
+pressure=10.25 trip=False final_elements={'FV-102': 'OPEN', 'XV-118': 'CLOSED'}
+pressure=10.60 trip=True final_elements={'FV-102': 'CLOSED', 'XV-118': 'OPEN'}
+pressure=10.95 trip=True final_elements={'FV-102': 'CLOSED', 'XV-118': 'OPEN'}
+pressure=11.30 trip=True final_elements={'FV-102': 'CLOSED', 'XV-118': 'OPEN'}
+pressure=11.65 trip=True final_elements={'FV-102': 'CLOSED', 'XV-118': 'OPEN'}

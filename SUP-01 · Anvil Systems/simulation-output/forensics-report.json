@@ -1,0 +1,11 @@
+{
+  "known_bad_versions": [
+    "4.11.2",
+    "4.13.0"
+  ],
+  "presumed_bad_versions": [
+    "4.12.1"
+  ],
+  "clean_proof_possible_for": [],
+  "reason": "no reproducible builds (F13), no published hash record (F14) -> F32"
+}

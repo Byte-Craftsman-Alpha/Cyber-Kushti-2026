@@ -1,0 +1,33 @@
+
+              __     _        _           _
+  __ _____   / /    (_)__    (_)__  ___ _/ /_
+ / // / -_) / /__  / / _ \  / / _ \/ _ `/ __/
+ \_, /\__/ /____/_/ /_//_/ /_/_//_/\_,_/\__/
+/___/                 mock engineering tool
+       for the Deccan OT-03 teaching lab
+
+  target  : 127.0.0.1  sis:15002  dcs:15003
+  site    : Deccan Speciality Chemicals, Rajkot continuous plant (MOCK)
+
+==========================================================================
+  STAGE 1: RECONNAISSANCE - what is on this network segment
+==========================================================================
+peer       : 127.0.0.1
+targets    : plant segment, VLAN separated, same physical switch
+  port 15002  open    SafeGuard SIS logic solver
+  port 15003  open    Centra DCS controller
+
+talking to the safety controller:
+  {
+    "ok": true,
+    "product": "SafeGuard SIS",
+    "proto": "VEL/1",
+    "logic_version": "R201-SIS-L4.2 (proof tested 14 Feb 2027)",
+    "key_switch": "RUN",
+    "auth_required": false,
+    "note": "no authentication on this protocol (F11)"
+  }
+
+note what the controller said:
+  'auth_required': false      <- the protocol asks nothing of me
+  the key switch is in RUN    <- an override is still allowed

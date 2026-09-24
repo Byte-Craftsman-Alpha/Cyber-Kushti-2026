@@ -1,0 +1,240 @@
+{
+  "01_recon_introspection": {
+    "path_walk": {
+      "/.env": {
+        "status": 404,
+        "bytes": 207
+      },
+      "/.git/config": {
+        "status": 404,
+        "bytes": 207
+      },
+      "/config.json": {
+        "status": 404,
+        "bytes": 207
+      },
+      "/admin": {
+        "status": 404,
+        "bytes": 207
+      },
+      "/api": {
+        "status": 404,
+        "bytes": 207
+      },
+      "/graphql": {
+        "status": 405,
+        "bytes": 153
+      },
+      "/schema": {
+        "status": 200,
+        "bytes": 281
+      }
+    },
+    "staging_introspection": {
+      "data": {
+        "__schema": {
+          "note": "214 ops in real incident; 11 representative ops in prototype",
+          "operations": [
+            "requestRecoveryCode",
+            "verifyRecoveryCode",
+            "updateProfile",
+            "orderLookup",
+            "submitReview",
+            "redeemStoreCredit",
+            "issueStoreCredit",
+            "bulkExport",
+            "grantRoleAdmin",
+            "grantRoleSupport",
+            "assignSuperRole"
+          ]
+        }
+      }
+    },
+    "prod_introspection": {
+      "errors": [
+        "Introspection disabled in production"
+      ]
+    },
+    "schema_route": {
+      "note": "214 ops in real incident; 11 representative ops in prototype",
+      "operations": [
+        "requestRecoveryCode",
+        "verifyRecoveryCode",
+        "updateProfile",
+        "orderLookup",
+        "submitReview",
+        "redeemStoreCredit",
+        "issueStoreCredit",
+        "bulkExport",
+        "grantRoleAdmin",
+        "grantRoleSupport",
+        "assignSuperRole"
+      ]
+    }
+  },
+  "02_recovery_bruteforce": {
+    "found_at": {
+      "http_request": 3,
+      "range": "001000-001499"
+    },
+    "http_requests": 3,
+    "guesses": 1500,
+    "stolen_session": "f91b8a8ee19e363b38e5195c77ff272d"
+  },
+  "03_session_reuse": {
+    "reused_session_prefix": "f91b8a8ee19e363b",
+    "prod_accepted": true
+  },
+  "04_mass_assignment": {
+    "privesc": {
+      "data": [
+        {
+          "updateProfile": {
+            "account_type": "internal_ops",
+            "note": "VULN: no allow-list; store_credit_paise/account_type/email_verified accepted",
+            "ok": true,
+            "patched": {
+              "account_type": "internal_ops",
+              "email": "d.rathore@northwind-goods.com",
+              "phone": "+91-98200-99999"
+            }
+          }
+        }
+      ],
+      "meta": {
+        "env": "production",
+        "http_requests": 1,
+        "ops_executed": 1
+      }
+    },
+    "bulk_export_ok": true,
+    "f11": {
+      "data": [
+        {
+          "assignSuperRole": {
+            "now": "admin",
+            "ok": true,
+            "target": "d.rathore@northwind-goods.com",
+            "warning": "unguarded operation (F11)"
+          }
+        }
+      ],
+      "meta": {
+        "env": "production",
+        "http_requests": 1,
+        "ops_executed": 1
+      }
+    }
+  },
+  "05_idor_enum": {
+    "enumerated": 7,
+    "sample": [
+      {
+        "address": "warehouse-queue",
+        "customer_email": "aarav.sharma@example.in",
+        "ref": "NW500000001",
+        "state": "paid",
+        "total_paise": 299900
+      },
+      {
+        "address": "warehouse-queue",
+        "customer_email": "diya.patel@example.in",
+        "ref": "NW500000002",
+        "state": "awaiting_payment",
+        "total_paise": 309900
+      }
+    ]
+  },
+  "06_store_credit": {
+    "race": {
+      "attempts": 10,
+      "succeeded": 10,
+      "balance": 500000
+    },
+    "overwrite": {
+      "balance": 9999000
+    },
+    "doublespend": {
+      "attempts": 6,
+      "succeeded": 6,
+      "balance": 70000
+    }
+  },
+  "07_sqli": {
+    "planted": {
+      "data": [
+        {
+          "submitReview": {
+            "ok": true
+          }
+        }
+      ],
+      "meta": {
+        "env": "production",
+        "http_requests": 1,
+        "ops_executed": 1
+      }
+    },
+    "row_count": 8,
+    "sample": [
+      [
+        1,
+        "KETTLE-01",
+        "Heats fast, good build quality"
+      ],
+      [
+        2,
+        "SCALE-02",
+        "Accurate readings, compact size"
+      ],
+      [
+        1,
+        "aarav.sharma@example.in",
+        "+91-98200-11111"
+      ],
+      [
+        2,
+        "diya.patel@example.in",
+        "+91-98200-22222"
+      ]
+    ]
+  },
+  "08_callback_forgery": {
+    "forged": [
+      {
+        "ref": "NW500000002",
+        "before": "awaiting_payment",
+        "callback": {
+          "ok": true,
+          "order_ref": "NW500000002",
+          "released_to_warehouse": true,
+          "state": "paid"
+        },
+        "after": "paid"
+      },
+      {
+        "ref": "NW500000003",
+        "before": "awaiting_payment",
+        "callback": {
+          "ok": true,
+          "order_ref": "NW500000003",
+          "released_to_warehouse": true,
+          "state": "paid"
+        },
+        "after": "paid"
+      },
+      {
+        "ref": "NW500000004",
+        "before": "awaiting_payment",
+        "callback": {
+          "ok": true,
+          "order_ref": "NW500000004",
+          "released_to_warehouse": true,
+          "state": "paid"
+        },
+        "after": "paid"
+      }
+    ],
+    "wrong_sig_rejected": true
+  }
+}

@@ -1,0 +1,29 @@
+2026-09-24T12:27:45.424862 env=production op=orderLookup user=d.rathore@northwind-goods.com args={"ref": "NW500000001"} status=ok
+2026-09-24T12:27:45.424927 env=production op=graphql-batch user=d.rathore@northwind-goods.com args={"http_requests": 1, "ops_inside": 1} status=ok
+2026-09-24T12:27:45.429508 env=production op=updateProfile user=d.rathore@northwind-goods.com args={"keys": ["email", "phone", "account_type"]} status=ok
+2026-09-24T12:27:45.429552 env=production op=graphql-batch user=d.rathore@northwind-goods.com args={"http_requests": 1, "ops_inside": 1} status=ok
+2026-09-24T12:27:45.431822 env=production op=bulkExport user=d.rathore@northwind-goods.com args={} status=ok rows=6
+2026-09-24T12:27:45.431859 env=production op=graphql-batch user=d.rathore@northwind-goods.com args={"http_requests": 1, "ops_inside": 1} status=ok
+2026-09-24T12:27:45.435417 env=production op=assignSuperRole user=d.rathore@northwind-goods.com args={"email": "d.rathore@northwind-goods.com"} status=ok-UNGUARDED
+2026-09-24T12:27:45.435456 env=production op=graphql-batch user=d.rathore@northwind-goods.com args={"http_requests": 1, "ops_inside": 1} status=ok
+2026-09-24T12:27:45.454028 env=production op=graphql-batch user=d.rathore@northwind-goods.com args={"http_requests": 1, "ops_inside": 1} status=ok
+2026-09-24T12:27:45.456649 env=production op=graphql-batch user=d.rathore@northwind-goods.com args={"http_requests": 1, "ops_inside": 1} status=ok
+2026-09-24T12:27:45.460298 env=production op=graphql-batch user=d.rathore@northwind-goods.com args={"http_requests": 1, "ops_inside": 1} status=ok
+2026-09-24T12:27:45.464880 env=production op=graphql-batch user=d.rathore@northwind-goods.com args={"http_requests": 1, "ops_inside": 1} status=ok
+2026-09-24T12:27:45.466455 env=production op=graphql-batch user=d.rathore@northwind-goods.com args={"http_requests": 1, "ops_inside": 1} status=ok
+2026-09-24T12:27:45.467871 env=production op=graphql-batch user=d.rathore@northwind-goods.com args={"http_requests": 1, "ops_inside": 1} status=ok
+2026-09-24T12:27:45.469357 env=production op=graphql-batch user=d.rathore@northwind-goods.com args={"http_requests": 1, "ops_inside": 1} status=ok
+2026-09-24T12:27:45.472102 env=production op=graphql-batch user=d.rathore@northwind-goods.com args={"http_requests": 1, "ops_inside": 1} status=ok
+2026-09-24T12:27:45.480523 env=production op=graphql-batch user=d.rathore@northwind-goods.com args={"http_requests": 1, "ops_inside": 1} status=ok
+2026-09-24T12:27:45.483208 env=production op=graphql-batch user=d.rathore@northwind-goods.com args={"http_requests": 1, "ops_inside": 1} status=ok
+2026-09-24T12:27:45.489287 env=production op=updateProfile user=d.rathore@northwind-goods.com args={"keys": ["store_credit_paise"]} status=ok
+2026-09-24T12:27:45.489326 env=production op=graphql-batch user=d.rathore@northwind-goods.com args={"http_requests": 1, "ops_inside": 1} status=ok
+2026-09-24T12:27:45.495041 env=production op=updateProfile user=d.rathore@northwind-goods.com args={"keys": ["store_credit_paise"]} status=ok
+2026-09-24T12:27:45.495096 env=production op=graphql-batch user=d.rathore@northwind-goods.com args={"http_requests": 1, "ops_inside": 1} status=ok
+2026-09-24T12:27:45.549794 env=production op=graphql-batch user=d.rathore@northwind-goods.com args={"http_requests": 1, "ops_inside": 1} status=ok
+2026-09-24T12:27:45.551525 env=production op=graphql-batch user=d.rathore@northwind-goods.com args={"http_requests": 1, "ops_inside": 1} status=ok
+2026-09-24T12:27:45.553091 env=production op=graphql-batch user=d.rathore@northwind-goods.com args={"http_requests": 1, "ops_inside": 1} status=ok
+2026-09-24T12:27:45.554780 env=production op=graphql-batch user=d.rathore@northwind-goods.com args={"http_requests": 1, "ops_inside": 1} status=ok
+2026-09-24T12:27:45.556684 env=production op=graphql-batch user=d.rathore@northwind-goods.com args={"http_requests": 1, "ops_inside": 1} status=ok
+2026-09-24T12:27:45.559154 env=production op=graphql-batch user=d.rathore@northwind-goods.com args={"http_requests": 1, "ops_inside": 1} status=ok
+2026-09-24T12:27:45.565343 env=production op=graphql-batch user=d.rathore@northwind-goods.com args={"http_requests": 1, "ops_inside": 1} status=ok
